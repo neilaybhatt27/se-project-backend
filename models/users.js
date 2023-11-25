@@ -1,4 +1,8 @@
 const mongoose = require("mongoose");
+const fs = require('fs');
+
+const defaultImageData = fs.readFileSync("./defaults/default-img.jpg");
+
 const Schema = mongoose.Schema;
 const UserSchema = new Schema({
     username: {
@@ -22,8 +26,14 @@ const UserSchema = new Schema({
     },
 
     profilePicture: {
-        data: Buffer,
-        contentType: String
+        data: {
+            type: Buffer,
+            default: defaultImageData
+        },
+        contentType: {
+            type: String,
+            default: "default-image.jpg"
+        }
     },
 
     location: {
