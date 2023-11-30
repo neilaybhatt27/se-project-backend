@@ -6,7 +6,12 @@ const socket = require("socket.io");
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const Message = require('./models/communitymessage');
+const Community = require('./models/community');
 const Chat = require("./models/chats");
+const communityRoutes = require('./routes/community');
+const dashboardRoutes = require('./routes/dashboard');
+const addbooksRoutes = require('./routes/addbooksroute');
 // const chatControler = require("./controllers/chatControler");
 const bodyParser = require("body-parser");
 require("dotenv").config();
@@ -28,6 +33,9 @@ mongoose.connect(dbUrl)
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
 app.use("/chat", chatRoutes);
+app.use('/dashboard', dashboardRoutes);
+app.use('/community', communityRoutes);
+app.use('/add',addbooksRoutes)
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port, function () {
@@ -54,6 +62,25 @@ io.on("connection", (socket) => {
     if (sendUserSocket) {
       socket.to(sendUserSocket).emit("msg-recieve", data.msg);
     }
+  });
+
+  socket.on('message', async (data) => {
+    const community = await Community.findById(req.params.id);
+    if (!community.members.includes(req.user._id)) {
+      return res.status(403).json({ message: "You are not authorized to send messages in this community." });
+    }
+    const newMessage = new Message({
+      content: data.text,
+      createdBy: data.userId,
+      community: data.community,
+      time: new Date()
+    });
+    const message = await newMessage.save();
+    socket.broadcast.emit('message', message);
+  });
+ 
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
   });
 });
 
