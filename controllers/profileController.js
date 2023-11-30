@@ -1,16 +1,9 @@
 const User = require("../models/users");
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
 // Get User's profile
 exports.getProfile = async (req, res) => {
-    const token = req.header("auth-token");
-    if(!token) {
-        return res.status(500).send("Access Denied!");
-    }
-
     try {
-        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        const verified = req.user;
         const user = await User.findById(verified._id);
         res.json(user);
     } catch (err) {
@@ -20,13 +13,8 @@ exports.getProfile = async (req, res) => {
 
 // Update user location
 exports.updateLocation = async (req, res) => {
-    const token = req.header("auth-token");
-    if(!token) {
-        return res.status(500).send("Access Denied!");
-    }
-
     try {
-        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        const verified = req.user;
         const user = await User.findById(verified._id);
         user.location.type = req.body.location.type;
         user.location.coordinates = req.body.location.coordinates;
@@ -39,13 +27,8 @@ exports.updateLocation = async (req, res) => {
 
 //Update profile picture
 exports.updateProfilePicture = async (req, res) => {
-    const token = req.header("auth-token");
-    if(!token) {
-        return res.status(500).send("Access Denied!");
-    }
-
     try {
-        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        const verified = req.user;
         const user = await User.findById(verified._id);
         user.profilePicture.data = req.file.buffer;
         user.profilePicture.contentType = req.file.mimetype;
