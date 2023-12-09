@@ -9,5 +9,6 @@ router.post("/acceptRequest", token.authenticate, chatController.acceptChatReque
 router.post("/sendMessage", token.authenticate, chatController.sendMessage);
 router.get("/messages", token.authenticate, chatController.getChatsByID);
 router.get("/", token.authenticate, chatController.getChats);
+router.delete("/declineRequest", token.authenticate, chatController.declineChatRequest);
 
 module.exports = router;

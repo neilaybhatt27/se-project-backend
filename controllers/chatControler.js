@@ -53,7 +53,22 @@ exports.acceptChatRequest = async (req, res) => {
     } catch (err) {
         res.status(500).json({message: err.message});
     }
-};   
+};
+
+exports.declineChatRequest = async (req, res) => {
+    try {
+        const verified = req.user;
+        const chatRequest = await ChatRequest.findById(req.body.chatRequestId);
+        if (chatRequest.status !== 'pending') return res.status(400).send('Invalid chat request status');
+        ChatRequest.deleteOne({_id: chatRequest._id}).then(function (req, res) {
+            res.json({message: "Chat declined!"});
+        }).catch(function (err) {
+            res.status(500).json({message: err.message});
+        });
+    } catch (err) {
+        res.status(500).json({message: err.message});
+    }
+};
 
 //Create a chat
 // exports.createChat = async (req, res) => {
