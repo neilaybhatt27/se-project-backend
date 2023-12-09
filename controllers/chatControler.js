@@ -1,6 +1,7 @@
 const User = require("../models/users");
 const Chat = require("../models/chats");
 const ChatRequest = require("../models/chatRequest");
+const Book = require("../models/book");
 
 // Send a chat request
 exports.sendChatRequest = async (req, res) => {
@@ -29,7 +30,7 @@ exports.acceptChatRequest = async (req, res) => {
 
         const otherUser = await User.findById(req.body.otherUserId);
         const chat = new Chat({
-            topic: req.body.topic,
+            bookId: req.body.bookId,
             users: [chatRequest.requestingUserId, chatRequest.otherUserId]
         });
 
@@ -90,9 +91,11 @@ exports.getChats = async (req, res) => {
 exports.getChatsByID = async (req, res) => {
     try {
         const verified = req.user;
-        const otherUser = await User.findOne({email: req.body.email});
-        const chats = await Chat.findById(otherUser._id).populate('messages');
-        res.json(chats);
+        // const otherUser = await User.findOne({email: req.params.email});
+        // console.log(otherUser);
+        const book = await Book.findById(req.body.bookId);
+        const chats = await Chat.findOne({bookId: book._id}).populate('messages');
+        res.json(chats.messages);
     } catch (err) {
         res.status(500).json({message: err.message});
     }
