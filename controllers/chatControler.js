@@ -28,13 +28,22 @@ exports.acceptChatRequest = async (req, res) => {
         chatRequest.status = 'accepted';
         const savedChatRequest = await chatRequest.save();
 
-        const otherUser = await User.findById(req.body.otherUserId);
+
+        const otherUser = await User.findById(chatRequest.requestingUserId);
         const chat = new Chat({
             bookId: req.body.bookId,
             users: [chatRequest.requestingUserId, chatRequest.otherUserId]
         });
 
         const savedChat = await chat.save();
+
+        const book = await Book.findById(chat.bookId);
+        if (!book) {
+            return res.status(404).send('Book not found');
+        }
+        book.currentBorrower = chatRequest.requestingUserId;
+        await book.save();
+
         user.chats.push(savedChat._id);
         await user.save();
         otherUser.chats.push(savedChat._id);

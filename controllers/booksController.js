@@ -1,4 +1,4 @@
-const Book = require('../models/book'); // import your Book model
+const Book = require('../models/book'); 
 const User = require('../models/users');
 
 exports.addBook = async (req, res) => {
@@ -16,6 +16,21 @@ exports.addBook = async (req, res) => {
   try {
     const book = await newBook.save();
     res.status(201).json(book);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getUserBookHistory = async (req, res) => {
+  try {
+    const userId = req.user._id; 
+    const borrowedBooks = await Book.find({ currentBorrower: userId });
+    const landedBooks = await Book.find({ userid: userId});
+
+    res.json({
+      borrowedBooks: borrowedBooks,
+      landedBooks: landedBooks
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

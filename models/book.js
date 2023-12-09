@@ -33,11 +33,17 @@ const BookSchema = new Schema({
         required: false
     },
 
-    status : {
-        type : Boolean,
-        default : true
+    status: {
+        type: String,
+        enum: ['available', 'borrowed'],
+        default: 'available'
     },
-
+    currentBorrower: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: false 
+    },
+    
     bookimage: {
         data: {
             type: Buffer,

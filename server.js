@@ -35,7 +35,7 @@ app.use("/profile", profileRoutes);
 app.use("/chat", chatRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/community', communityRoutes);
-app.use('/add',addbooksRoutes)
+app.use('/book',addbooksRoutes)
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port, function () {

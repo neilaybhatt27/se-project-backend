@@ -4,6 +4,8 @@ const booksController = require('../controllers/booksController');
 const verifyToken = require('../middleware/verifyToken');
 
 // Route to add a new book
-router.post('/books',verifyToken.authenticate, booksController.addBook);
+router.post('/add',verifyToken.authenticate, booksController.addBook);
+
+router.get('/activity',verifyToken.authenticate, booksController.getUserBookHistory);
 
 module.exports = router;
