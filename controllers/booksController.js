@@ -25,11 +25,11 @@ exports.getUserBookHistory = async (req, res) => {
   try {
     const userId = req.user._id; 
     const borrowedBooks = await Book.find({ currentBorrower: userId });
-    const landedBooks = await Book.find({ userid: userId});
+    const lendedBooks = await Book.find({ userid: userId, currentBorrower: { $ne: null } });
 
     res.json({
       borrowedBooks: borrowedBooks,
-      landedBooks: landedBooks
+      lendedBooks: lendedBooks
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
