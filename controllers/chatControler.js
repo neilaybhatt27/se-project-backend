@@ -117,7 +117,7 @@ exports.getChatsByID = async (req, res) => {
         const verified = req.user;
         // const otherUser = await User.findOne({email: req.params.email});
         // console.log(otherUser);
-        const chats = await Chat.findOne({bookId: req.body.bookId}).populate('messages');
+        const chats = await Chat.findOne({bookId: req.params.bookId}).populate('messages');
         res.json(chats.messages);
     } catch (err) {
         res.status(500).json({message: err.message});
