@@ -66,12 +66,13 @@ io.on("connection", (socket) => {
 
   socket.on('message', async (data) => {
     const community = await Community.findById(req.params.id);
+    const user = await User.findById(data.userId);
     if (!community.members.includes(req.user._id)) {
       return res.status(403).json({ message: "You are not authorized to send messages in this community." });
     }
     const newMessage = new Message({
       content: data.text,
-      createdBy: data.userId,
+      createdBy: user.username,
       community: data.community,
       time: new Date()
     });

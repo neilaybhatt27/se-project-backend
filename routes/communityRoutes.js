@@ -3,6 +3,7 @@ const router = express.Router();
 const communitiesController = require('../controllers/communityController');
 const verifyToken = require('../middleware/verifyToken');
 const Message = require('../models/communitymessage');
+const User = require('../models/users')
 
 // Route to create a new community
 router.post('/new',verifyToken.authenticate, communitiesController.createCommunity);
@@ -22,11 +23,12 @@ router.post('/:id/leave', verifyToken.authenticate, communitiesController.leaveC
 // Route to post a message in a community
 
 router.post('/:id/messages', verifyToken.authenticate, async (req, res) => {
+    const user = await User.findById(data.userId);
     const io = req.app.get('io');
     const { content } = req.body;
     const newMessage = new Message({
     content,
-    createdBy: req.user._id,
+    createdBy: user.username,
     community: req.params.id,
     userId: req.user._id,
     time: new Date()

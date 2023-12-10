@@ -1,5 +1,6 @@
 const Community = require('../models/community');
 const Message = require('../models/communitymessage');
+const User = require("../models/users")
 // Create a new community
 exports.createCommunity = async (req, res) => {
   const { name, description} = req.body;
@@ -79,6 +80,7 @@ exports.leaveCommunity = async (req, res) => {
 exports.postMessage = async (req, res) => {
   const { content } = req.body;
   const community = await Community.findById(req.params.id);
+  const user = await User.findById(req.user._id);
 
   if (!community.members.includes(req.user._id)) {
     return res.status(403).json({ message: "You are not authorized to send messages in this community." });
@@ -86,7 +88,7 @@ exports.postMessage = async (req, res) => {
 
   const newMessage = new Message({
     content,
-    createdBy: req.user._id,
+    createdBy: user.username,
     community: req.params.id
   });
 

@@ -7,7 +7,7 @@ const MessageSchema = new Schema({
     required: true
   },
   createdBy: {
-    type: Schema.Types.ObjectId,
+    type: Schema.Types.String,
     ref: 'User',
     required: true
   },
