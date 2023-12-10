@@ -13,7 +13,6 @@ exports.getDashboard = async (req, res) => {
           spherical: true
         }
       },
-      { $limit: 3 }
     ]);
     res.json(books);
   } catch (error) {
@@ -59,22 +58,5 @@ exports.searchBooks = async (req, res) => {
    res.status(500).json({ message: error.message });
   }
  };
- 
- 
-
-
-// exports.searchBooks = async (req, res) => {
-//   try {
-//   const searchTerm = req.query.term; 
-//   const books = await Book.find({
-//     title: { $regex: searchTerm, $options: 'i' }, 
-//   }).select('bookid image title author genre location status description'); 
-//   res.json(books);
-//   } catch (error) {
-//   res.status(500).json({ message: error.message });
-//   }
-//  };
- 
-
 
 const Book = require('../models/book');

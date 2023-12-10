@@ -44,8 +44,18 @@ exports.getUserBookHistory = async (req, res) => {
 
 exports.getAllBooks = async (req, res) => {
   try {
-    const books = await Book.find({});
-    console.log(books)
+    // const books = await Book.find({});
+    const user = await User.findById(req.user._id);
+    const books = await Book.aggregate([
+      {
+        $geoNear: {
+          near: user.location,
+          distanceField: "distance",
+          spherical: true
+        }
+      },
+    ]);
+    console.log(books);
     res.json(books);
   } catch (error) {
     res.status(500).json({ message: error.message });
