@@ -4,7 +4,7 @@ const profileController = require("../controllers/profileController");
 const multer = require('multer');
 const token = require('../middleware/verifyToken');
 const storage = multer.memoryStorage(); // Store in memory as a Buffer
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage, limits: { fileSize: 10 * 1024 * 1024} });
 
 router.get("/user", token.authenticate ,profileController.getProfile);
 router.put("/location", token.authenticate, profileController.updateLocation);
