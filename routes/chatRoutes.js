@@ -5,7 +5,7 @@ const chatController = require("../controllers/chatControler");
 
 router.post("/sendRequest", token.authenticate, chatController.sendChatRequest);
 router.post("/acceptRequest", token.authenticate, chatController.acceptChatRequest);
-router.get("/getChatRequests", token.authenticate, chatController.getAllChatRequests);
+router.get("/allChatRequests", token.authenticate, chatController.getAllChatRequests);
 // router.post("/new", token.authenticate, chatController.createChat);
 router.post("/sendMessage", token.authenticate, chatController.sendMessage);
 router.get("/messages/:chatId", token.authenticate, chatController.getChatsByID);
