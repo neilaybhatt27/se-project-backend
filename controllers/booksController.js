@@ -1,3 +1,4 @@
+const path = require('path');
 const Book = require('../models/book'); 
 const User = require('../models/users');
 const fs = require('fs');
@@ -12,7 +13,7 @@ exports.addBook = async (req, res) => {
     author,
     description,
     bookimage: {
-      data: req.file.buffer,
+      data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
       contentType: req.file.mimetype
     },
     location : user.location,

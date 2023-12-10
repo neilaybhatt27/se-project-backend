@@ -123,7 +123,8 @@ exports.getChatsByID = async (req, res) => {
             otherUserId = chats.users[1]; 
         }
         const otherUser = await User.findById(otherUserId);
-        res.json({chats: chats.messages, image: otherUser.profilePicture});
+        const base64Image = Buffer.from(otherUser.profilePicture.data).toString('base64');
+        res.json({chats: chats.messages, image: base64Image});
     } catch (err) {
         res.status(500).json({message: err.message});
     }
