@@ -19,6 +19,8 @@ router.post('/add',verifyToken.authenticate, upload.single('image'), booksContro
 
 router.get('/activity',verifyToken.authenticate, booksController.getUserBookHistory);
 
+router.get("/uploads", verifyToken.authenticate, booksController.getUploadedBooks);
+
 router.get('/',verifyToken.authenticate, booksController.getAllBooks);
 
 module.exports = router;

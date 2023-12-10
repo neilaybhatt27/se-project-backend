@@ -25,7 +25,7 @@ exports.addBook = async (req, res) => {
 
   try {
     const book = await newBook.save();
-    fs.unlinkSync(req.file.path);
+    fs.unlinkSync(path.join(uploadPath + '/defaults/' + req.file.filename));
     res.status(201).json(book);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -46,6 +46,16 @@ exports.getUserBookHistory = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getUploadedBooks = async (req, res) => {
+  try {
+    const verified = req.user;
+    const uploadedBooks = await Book.find({userid: verified._id});
+    res.json(uploadedBooks);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
 
 exports.getAllBooks = async (req, res) => {
   try {
