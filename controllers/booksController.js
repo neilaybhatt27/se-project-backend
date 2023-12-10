@@ -6,23 +6,26 @@ const fs = require('fs');
 
 exports.addBook = async (req, res) => {
   const { title, author, description} = req.body;
-  const defaultImageData = fs.readFileSync("./defaults/default-img.jpg");
+  // const defaultImageData = fs.readFileSync("./defaults/default-img.jpg");
   const user = await User.findById(req.user._id);
+  const uploadPath = path.resolve(__dirname, '..');
   const newBook = new Book({
     title,
     author,
     description,
     bookimage: {
-      data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+      data: fs.readFileSync(path.join(uploadPath + '/defaults/' + req.file.filename)),
+      // data: req.body.buffer,
       contentType: req.file.mimetype
     },
     location : user.location,
     userid: req.user._id,
   });
-  console.log(req.file)
+  // console.log(req.file)
 
   try {
     const book = await newBook.save();
+    fs.unlinkSync(req.file.path);
     res.status(201).json(book);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -57,7 +60,7 @@ exports.getAllBooks = async (req, res) => {
         }
       },
     ]);
-    console.log(books);
+    // console.log(books);
     res.json(books);
   } catch (error) {
     res.status(500).json({ message: error.message });

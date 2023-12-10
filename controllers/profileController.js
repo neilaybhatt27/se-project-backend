@@ -1,4 +1,5 @@
 const User = require("../models/users");
+const fs = require('fs');
 
 // Get User's profile
 exports.getProfile = async (req, res) => {
@@ -30,7 +31,7 @@ exports.updateProfilePicture = async (req, res) => {
     try {
         const verified = req.user;
         const user = await User.findById(verified._id);
-        user.profilePicture.data = req.file.buffer;
+        user.profilePicture.data = fs.readFileSync(path.join(uploadPath + '/defaults/' + req.file.filename));
         user.profilePicture.contentType = req.file.mimetype;
         const updatedUser = await user.save();
         res.json(updatedUser);

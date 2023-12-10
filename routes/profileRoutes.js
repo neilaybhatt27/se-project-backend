@@ -3,7 +3,14 @@ const router = express.Router();
 const profileController = require("../controllers/profileController");
 const multer = require('multer');
 const token = require('../middleware/verifyToken');
-const storage = multer.memoryStorage(); // Store in memory as a Buffer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'defaults');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
+}); 
 const upload = multer({ storage: storage, limits: { fileSize: 10 * 1024 * 1024} });
 
 router.get("/user", token.authenticate ,profileController.getProfile);
