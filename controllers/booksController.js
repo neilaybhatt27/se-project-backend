@@ -13,11 +13,12 @@ exports.addBook = async (req, res) => {
     description,
     bookimage: {
       data: req.file ? req.file.buffer : defaultImageData,
-      contentType: req.file ? req.file.mimetype : 'default-image.jpg'
+      contentType: req.file.mimetype
     },
     location : user.location,
     userid: req.user._id,
   });
+  console.log(req.file)
 
   try {
     const book = await newBook.save();
