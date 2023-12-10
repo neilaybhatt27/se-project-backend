@@ -23,7 +23,7 @@ exports.sendChatRequest = async (req, res) => {
 exports.getAllChatRequests = async (req, res) => {
     try {
         const verified = req.user;
-        const chatRequests = await ChatRequest.find({otherUserId: verified._id});
+        const chatRequests = await ChatRequest.find({otherUserId: verified._id}).populate('bookId');
         res.json(chatRequests);
     } catch (err) {
         res.status(500).json({message: err.message});
