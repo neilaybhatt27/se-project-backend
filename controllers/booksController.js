@@ -1,14 +1,20 @@
 const Book = require('../models/book'); 
 const User = require('../models/users');
+const fs = require('fs');
+
 
 exports.addBook = async (req, res) => {
-  const { title, author, description, image} = req.body;
+  const { title, author, description} = req.body;
+  const defaultImageData = fs.readFileSync("./defaults/default-img.jpg");
   const user = await User.findById(req.user._id);
   const newBook = new Book({
     title,
     author,
     description,
-    image,
+    bookimage: {
+      data: req.file ? req.file.buffer : defaultImageData,
+      contentType: req.file ? req.file.mimetype : 'default-image.jpg'
+    },
     location : user.location,
     userid: req.user._id,
   });
@@ -31,6 +37,16 @@ exports.getUserBookHistory = async (req, res) => {
       borrowedBooks: borrowedBooks,
       lendedBooks: lendedBooks
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getAllBooks = async (req, res) => {
+  try {
+    const books = await Book.find({});
+    console.log(books)
+    res.json(books);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
