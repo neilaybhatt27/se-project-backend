@@ -9,7 +9,8 @@ exports.sendChatRequest = async (req, res) => {
       const verified = req.user;
       const chatRequest = new ChatRequest({
         requestingUserId: verified._id,
-        otherUserId: req.body.otherUserId
+        otherUserId: req.body.otherUserId,
+        bookId: req.body.bookId
       });
       const savedChatRequest = await chatRequest.save();
       res.json(savedChatRequest);
