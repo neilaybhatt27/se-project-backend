@@ -118,7 +118,12 @@ exports.getChatsByID = async (req, res) => {
         // const otherUser = await User.findOne({email: req.params.email});
         // console.log(otherUser);
         const chats = await Chat.findById(req.params.chatId).populate('messages');
-        res.json(chats.messages);
+        let otherUserId = chats.users[0];
+        if(chats.users[0] == verified._id) {
+            otherUserId = chats.users[1]; 
+        }
+        const otherUser = await User.findById(otherUserId);
+        res.json({chats: chats.messages, image: otherUser.profilePicture});
     } catch (err) {
         res.status(500).json({message: err.message});
     }
