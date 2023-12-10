@@ -6,7 +6,8 @@ exports.getProfile = async (req, res) => {
     try {
         const verified = req.user;
         const user = await User.findById(verified._id);
-        res.json(user);
+        const base64Image = Buffer.from(user.profilePicture.data).toString('base64');
+        res.json({user: user, image: base64Image});
     } catch (err) {
         res.status(500).json({message: err.message});
     }
