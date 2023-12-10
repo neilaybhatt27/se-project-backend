@@ -44,9 +44,9 @@ exports.acceptChatRequest = async (req, res) => {
         book.currentBorrower = chatRequest.requestingUserId;
         await book.save();
 
-        user.chats.push(savedChat._id);
+        user.chats.push({chatId: savedChat._id, otherUser: otherUser.username});
         await user.save();
-        otherUser.chats.push(savedChat._id);
+        otherUser.chats.push({chatId: savedChat._id, otherUser: user.username});
         await otherUser.save();
 
         res.json(savedChat);

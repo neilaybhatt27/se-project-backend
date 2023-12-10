@@ -50,8 +50,11 @@ const UserSchema = new Schema({
     },
 
     chats: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Chat'
+        chatId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Chat'
+        },
+        otherUser: String
     }] 
 });
 module.exports = mongoose.model("User", UserSchema);

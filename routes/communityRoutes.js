@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const communitiesController = require('../controllers/communitycontroller');
+const communitiesController = require('../controllers/communityController');
 const verifyToken = require('../middleware/verifyToken');
 const Message = require('../models/communitymessage');
 
