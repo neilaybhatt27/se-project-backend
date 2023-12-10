@@ -16,7 +16,18 @@ exports.sendChatRequest = async (req, res) => {
     } catch (err) {
       res.status(500).json({message: err.message});
     }
-};   
+};
+
+//Get All chat requests
+exports.getAllChatRequests = async (req, res) => {
+    try {
+        const verified = req.user;
+        const chatRequests = await ChatRequest.find({otherUserId: verified._id});
+        res.json(chatRequests);
+    } catch (err) {
+        res.status(500).json({message: err.message});
+    }
+};
 
 // Accept a chat request
 exports.acceptChatRequest = async (req, res) => {
