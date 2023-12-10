@@ -8,6 +8,15 @@ const secretKey = process.env.JWT_SECRET;
 //User registration
 exports.register = async (req, res) => {
     try {
+        const usernameCheck = await User.findOne({ username });
+        if (usernameCheck){
+            return res.json({ message: "Username already used", status: false });
+        }
+        const emailCheck = await User.findOne({ email });
+        if (emailCheck){
+            return res.json({ message: "Email already used", status: false });
+        }    
+
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = new User({
             username: req.body.username,
