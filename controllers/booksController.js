@@ -12,7 +12,7 @@ exports.addBook = async (req, res) => {
     author,
     description,
     bookimage: {
-      data: req.file ? req.file.buffer : defaultImageData,
+      data: req.file.buffer,
       contentType: req.file.mimetype
     },
     location : user.location,
