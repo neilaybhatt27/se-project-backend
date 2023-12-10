@@ -69,8 +69,12 @@ exports.getAllBooks = async (req, res) => {
           spherical: true
         }
       },
+      {
+        $match: {
+          userid: { $ne: user._id }
+        }
+      },
     ]);
-    // console.log(books);
     res.json(books);
   } catch (error) {
     res.status(500).json({ message: error.message });

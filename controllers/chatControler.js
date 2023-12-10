@@ -54,6 +54,7 @@ exports.acceptChatRequest = async (req, res) => {
             return res.status(404).send('Book not found');
         }
         book.currentBorrower = chatRequest.requestingUserId;
+        book.status = 'borrowed';
         await book.save();
 
         user.chats.push({chatId: savedChat._id, otherUser: otherUser.username});
@@ -61,7 +62,13 @@ exports.acceptChatRequest = async (req, res) => {
         otherUser.chats.push({chatId: savedChat._id, otherUser: user.username});
         await otherUser.save();
 
-        res.json(savedChat);
+        ChatRequest.deleteOne({_id: chatRequest._id}).then(function (req, res) {
+            res.json(savedChat);
+        }).catch(function (err) {
+            res.status(500).json({message: err.message});
+        });
+
+        // res.json(savedChat);
     } catch (err) {
         res.status(500).json({message: err.message});
     }
