@@ -8,11 +8,11 @@ const secretKey = process.env.JWT_SECRET;
 //User registration
 exports.register = async (req, res) => {
     try {
-        const usernameCheck = await User.findOne({ username });
+        const usernameCheck = await User.findOne({ username: req.body.username });
         if (usernameCheck){
             return res.json({ message: "Username already used", status: false });
         }
-        const emailCheck = await User.findOne({ email });
+        const emailCheck = await User.findOne({ email: req.body.email });
         if (emailCheck){
             return res.json({ message: "Email already used", status: false });
         }    
