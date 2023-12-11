@@ -50,38 +50,59 @@ const io = socket(server, {
 });
 
 global.onlineUsers = new Map();
-io.on("connection", (socket) => {
-  global.chatSocket = socket;
-  console.log("socket connected");
-  socket.on("add-user", (userId) => {
-    onlineUsers.set(userId, socket.id);
-  });
+// io.on("connection", (socket) => {
+//   global.chatSocket = socket;
+//   console.log("socket connected");
+//   socket.on("add-user", (userId) => {
+//     onlineUsers.set(userId, socket.id);
+//   });
 
-  socket.on("send-msg", (data) => {
-    const sendUserSocket = onlineUsers.get(data.to);
-    if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("msg-recieve", data.msg);
-    }
-  });
+//   socket.on("send-msg", (data) => {
+//     console.log("Received message in backend:", data.message, "from chat ID:", data.chatId);
+//     const sendUserSocket = onlineUsers.get(data.to);
+//     if (sendUserSocket) {
+//       socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+//     }
+//   });
 
-  socket.on('message', async (data) => {
-    const community = await Community.findById(req.params.id);
-    const user = await User.findById(data.userId);
-    if (!community.members.includes(req.user._id)) {
-      return res.status(403).json({ message: "You are not authorized to send messages in this community." });
-    }
-    const newMessage = new Message({
-      content: data.text,
-      createdBy: user.username,
-      community: data.community,
-      time: new Date()
-    });
-    const message = await newMessage.save();
-    socket.broadcast.emit('message', message);
-  });
+//   socket.on('message', async (data) => {
+//     const community = await Community.findById(req.params.id);
+//     const user = await User.findById(data.userId);
+//     if (!community.members.includes(req.user._id)) {
+//       return res.status(403).json({ message: "You are not authorized to send messages in this community." });
+//     }
+//     const newMessage = new Message({
+//       content: data.text,
+//       createdBy: user.username,
+//       community: data.community,
+//       time: new Date()
+//     });
+//     const message = await newMessage.save();
+//     socket.broadcast.emit('message', message);
+//   });
  
+//   socket.on('disconnect', () => {
+//     console.log('A user disconnected');
+//   });
+// });
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
+    console.log('User disconnected:', socket.id);
+  });
+
+  // Handle chat messages
+  socket.on('send-msg', (data) => {
+    console.log('Received message from', socket.id, ':', data.message);
+
+    // Broadcast the message to all connected clients
+    io.emit('send-msg', {
+      chatId: data.chatId,
+      message: data.message,
+      senderId: data.senderId,
+    }); 
   });
 });
 

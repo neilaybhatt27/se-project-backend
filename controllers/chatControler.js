@@ -62,13 +62,14 @@ exports.acceptChatRequest = async (req, res) => {
         otherUser.chats.push({chatId: savedChat._id, otherUser: user.username});
         await otherUser.save();
 
-        ChatRequest.deleteOne({_id: chatRequest._id}).then(function (req, res) {
-            res.json(savedChat);
-        }).catch(function (err) {
-            res.status(500).json({message: err.message});
-        });
+        // ChatRequest.deleteOne({_id: chatRequest._id}).then(function (req, res) {
+        //     res.json(savedChat);
+        // }).catch(function (err) {
+        //     res.status(500).json({message: err.message});
+        // });
+        await ChatRequest.deleteOne({_id: chatRequest._id});
 
-        // res.json(savedChat);
+        res.json(savedChat);
     } catch (err) {
         res.status(500).json({message: err.message});
     }
@@ -79,11 +80,8 @@ exports.declineChatRequest = async (req, res) => {
         const verified = req.user;
         const chatRequest = await ChatRequest.findById(req.body.chatRequestId);
         if (chatRequest.status !== 'pending') return res.status(400).send('Invalid chat request status');
-        ChatRequest.deleteOne({_id: chatRequest._id}).then(function (req, res) {
-            res.json({message: "Chat declined!"});
-        }).catch(function (err) {
-            res.status(500).json({message: err.message});
-        });
+        await ChatRequest.deleteOne({_id: chatRequest._id});
+        res.json({message: "Chat Declined!"});
     } catch (err) {
         res.status(500).json({message: err.message});
     }
@@ -114,6 +112,9 @@ exports.sendMessage = async (req, res) => {
         const message = { user: verified._id, message: req.body.message, timestamp: Date.now() };
         chat.messages.push(message);
         const savedChat = await chat.save();
+
+
+
         res.json(savedChat);
         
     } catch (err) {
