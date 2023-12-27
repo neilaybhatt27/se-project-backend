@@ -44,7 +44,7 @@ const server = app.listen(port, function () {
 
 const io = socket(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3001",
     credentials: true,
   },
 });
@@ -93,16 +93,59 @@ io.on('connection', (socket) => {
     console.log('User disconnected:', socket.id);
   });
 
-  // Handle chat messages
-  socket.on('send-msg', (data) => {
-    console.log('Received message from', socket.id, ':', data.message);
+  // Handle chat messages Working but not storing the messages in database
+  // socket.on('send-msg', (data) => {
+  //   console.log('Received message from', socket.id, ':', data.message);
 
-    // Broadcast the message to all connected clients
-    io.emit('send-msg', {
-      chatId: data.chatId,
-      message: data.message,
-      senderId: data.senderId,
-    }); 
+  //   // Broadcast the message to all connected clients
+  //   io.emit('send-msg', {
+  //     chatId: data.chatId,
+  //     message: data.message,
+  //     senderId: data.senderId,
+  //   }); 
+  // });
+
+  socket.on('send-msg', async (data) => {
+    try {
+      // Destructure data for clarity
+      const { chatId, message, user } = data;
+
+      // Log the received message
+      console.log('Received message from', socket.id, ':', message);
+
+      // Find the chat document by ID
+      const chat = await Chat.findById(chatId);
+      if (!chat) {
+        console.error('Chat not found!');
+        return; // Or handle this scenario as needed
+      }
+
+      // Push the new message to the chat's messages array
+      chat.messages.push({
+        user, // or socket.id if you want the socket's unique ID
+        message,
+        timestamp: Date.now()
+      });
+
+      // Save the updated chat document
+      await chat.save();
+
+      // Emit the message to all clients in the chat room
+      // io.to(chatId).emit('chat-message', {
+      //   user: senderId,
+      //   message,
+      //   timestamp: Date.now()
+      // });
+      io.emit('send-msg', {
+            chatId: data.chatId,
+            message: data.message,
+            user: data.user,
+          }); 
+
+    } catch (err) {
+      console.error('Error handling send-msg:', err);
+      // Handle errors appropriately in your real app
+    }
   });
 });
 

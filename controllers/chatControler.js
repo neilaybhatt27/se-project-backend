@@ -126,7 +126,8 @@ exports.getChats = async (req, res) => {
     try {
         const verified = req.user;
         const user = await User.findById(verified._id).populate('chats');
-        res.json(user.chats);
+        console.log(user);
+        res.json(user);
     } catch (err) {
         res.status(500).json({message: err.message});
     }
